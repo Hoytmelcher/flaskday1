@@ -1,0 +1,30 @@
+{% extends "base.jinja" %}
+
+{% block content %}
+    <h2>Cars</h2>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.make.label }}<br>
+            {{ form.make(size=32) }}
+        </p>
+        <p>
+            {{ form.model.label }}<br>
+            {{ form.model(size=32) }}
+        </p>
+        <p>
+            {{ form.year.label }}<br>
+            {{ form.year(size=32) }}
+        </p>
+        <p>
+            {{ form.color.label }}<br>
+            {{ form.color(size=32) }}
+        </p>
+        <p>
+            {{ form.price.label }}<br>
+            {{ form.price(size=32) }}
+        </p>
+         <p>
+            {{ form.submit(class='btn btn-primary') }}
+        </p>
+{% endblock %}

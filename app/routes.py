@@ -1,6 +1,6 @@
 from flask import render_template
 from app import app
-
+from app.forms import RegisterForm, LoginForm, CarForm
 
 @app.route('/')
 def index():
@@ -12,12 +12,19 @@ def about():
 
 @app.route('/register')
 def register():
-    return render_template('register.jinja')
+    form = RegisterForm()
+    return render_template('register.jinja', form=form)
 
 @app.route('/login')
 def login():
-    return render_template('login.jinja')
+    form = LoginForm()
+    return render_template('login.jinja', form=form)
 
 @app.route('/blog')
 def blog():
     return render_template('blog.jinja')
+
+@app.route('/cars')
+def cars():
+    form = CarForm()
+    return render_template('cars.jinja', form=form)
