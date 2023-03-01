@@ -33,4 +33,6 @@ def blog():
 @app.route('/cars', methods=['GET', 'POST'])
 def cars():
     form = CarForm()
+    if form.validate_on_submit():
+        flash(f'{form.year} {form.make} {form.model} registered')
     return render_template('cars.jinja', form=form)
