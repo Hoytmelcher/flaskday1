@@ -1,6 +1,8 @@
 from flask import render_template, flash, redirect
 from app import app
 from app.forms import RegisterForm, LoginForm, CarForm
+from app.models import User, Listing
+
 
 @app.route('/')
 def index():
@@ -14,6 +16,23 @@ def about():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        password = form.password.data
+        u = User(username=username,email=email,first_name=first_name,last_name=last_name,password_hash='')
+        user_match = User.query.filter_by(username=username).first()
+        email_match = User.query.filter_by(email=email).first()
+        if user_match:
+            flash(f'Username {username} already exists, try again')
+            return redirect('/register')
+        elif email_match:
+            flash(f'Email {email} already in use, try again')
+            return redirect('/register')
+        else:
+            u.hash_password(password)
+            u.commit()
         flash(f'Request to register {form.username} sucessful')
         return redirect('/')
     return render_template('register.jinja', form=form)
@@ -22,6 +41,12 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        user_match = User.query.filter_by(email=email).first()
+        if not user_match or not user_match.check_password(password):
+            flash(f'Email or password was incorrect, try again')
+            return redirect('/login')
         flash(f'Welcome back')
         return redirect('/')
     return render_template('login.jinja', form=form)
@@ -34,5 +59,15 @@ def blog():
 def cars():
     form = CarForm()
     if form.validate_on_submit():
-        flash(f'{form.year} {form.make} {form.model} registered')
+        make = form.make.data
+        model = form.model.data
+        year = form.year.data
+        color = form.color.data
+        price = form.price.data
+        date_created = form.date_created.data
+        user_id = form.user_id.data
+        l = Listing(make=make,model=model,year=year,color=color,price=price)
+        l.commit() 
+        flash(f'{form.year.data} {form.make.data} {form.model.data} registered')
+        return redirect('/cars')
     return render_template('cars.jinja', form=form)
