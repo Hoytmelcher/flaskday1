@@ -76,5 +76,5 @@ def cars():
         l = Listing(make=make,model=model,year=year,color=color,price=price,user_id=user_id)
         l.commit() 
         flash(f'{form.year.data} {form.make.data} {form.model.data} registered')
-        return redirect('/cars')
+        return redirect('/blog')
     return render_template('cars.jinja', form=form)
