@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect
 from app import app
 from app.forms import RegisterForm, LoginForm, CarForm
 from app.models import User, Listing
+from flask_login import current_user, login_user, logout_user, login_required
 
 
 @app.route('/')
@@ -33,7 +34,7 @@ def register():
         else:
             u.hash_password(password)
             u.commit()
-        flash(f'Request to register {form.username} sucessful')
+        flash(f'Request to register {username} sucessful')
         return redirect('/')
     return render_template('register.jinja', form=form)
 
@@ -48,8 +49,15 @@ def login():
             flash(f'Email or password was incorrect, try again')
             return redirect('/login')
         flash(f'Welcome back')
+        login_user(user_match, remember=form.remember_me.data)
         return redirect('/')
     return render_template('login.jinja', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
 @app.route('/blog')
 def blog():
@@ -64,9 +72,8 @@ def cars():
         year = form.year.data
         color = form.color.data
         price = form.price.data
-        date_created = form.date_created.data
-        user_id = form.user_id.data
-        l = Listing(make=make,model=model,year=year,color=color,price=price)
+        user_id = current_user.id
+        l = Listing(make=make,model=model,year=year,color=color,price=price,user_id=user_id)
         l.commit() 
         flash(f'{form.year.data} {form.make.data} {form.model.data} registered')
         return redirect('/cars')
